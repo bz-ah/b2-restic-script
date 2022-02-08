@@ -2,15 +2,17 @@
 
 # This script depends on ts for logging.  'apt install moreutils' under Debian
 
-export B2_ACCOUNT_ID="x" # Application key keyID
-export B2_ACCOUNT_KEY="x" # Application key keyName
+B2_VARS="/etc/restic-b2stuff"
+
+export B2_ACCOUNT_ID="$(sed '1q;d' $B2_VARS)" # Application key keyID
+export B2_ACCOUNT_KEY="$(sed '2q;d' $B2_VARS)" # Application key keyName
 export RESTIC_PASSWORD_FILE="/etc/restic-password"
 
-RESTIC_REPO="b2:x" # B2 bucket name
+RESTIC_REPO="$(sed '3q;d' $B2_VARS)" # B2 bucket name
 RESTIC_CMD="/usr/bin/restic -v -r $RESTIC_REPO"
 TS_DATE="[%Y-%m-%d %H:%M:%S]"
 RETENTION="30d"
-EXCLUDES="/root/restic/excludes"
+EXCLUDES="/opt/restic/excludes"
 RESTIC_LOG="/var/log/restic.log"
 
 for pid in $(pidof -x restic.sh); do
@@ -24,8 +26,6 @@ if [ ! -z "$1" ]; then
 	$RESTIC_CMD $1
 	exit $?
 fi
-
-echo "=== MARK ===" | ts "$TS_DATE" >> $RESTIC_LOG
 
 apt list --installed 2>/dev/null > /root/installed_packages
 
