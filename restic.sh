@@ -8,8 +8,10 @@ export B2_ACCOUNT_ID="$(sed '1q;d' $B2_VARS)" # Application key keyID
 export B2_ACCOUNT_KEY="$(sed '2q;d' $B2_VARS)" # Application key keyName
 export RESTIC_PASSWORD_FILE="/etc/restic-password"
 
+UP_LIMIT=9767
+DN_LIMIT=36621
 RESTIC_REPO="$(sed '3q;d' $B2_VARS)" # B2 bucket name
-RESTIC_CMD="/usr/bin/restic -v -r $RESTIC_REPO"
+RESTIC_CMD="/usr/bin/restic --limit-upload=$UP_LIMIT --limit-download=$DN_LIMIT -v -r $RESTIC_REPO"
 TS_DATE="[%Y-%m-%d %H:%M:%S]"
 RETENTION="30d"
 EXCLUDES="/opt/restic/excludes"
